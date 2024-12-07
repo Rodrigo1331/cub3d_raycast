@@ -15,7 +15,7 @@
 void	handle_keys(t_game *game)
 {
 	if (game->keys.esc >= 1)
-		free_game(game);
+		exit_x(game);
 	if (game->keys.w)
 		move_forward(game);
 	if (game->keys.s)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joaosilva <joaosilva@student.42.fr>        +#+  +:+       +#+        */
+/*   By: rcruz-an <rcruz-an@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 11:45:17 by joaosilva         #+#    #+#             */
-/*   Updated: 2024/12/06 11:27:20 by joaosilva        ###   ########.fr       */
+/*   Updated: 2024/12/04 16:23:38 by rcruz-an         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # include <stdio.h>
 # include <unistd.h>
 # include <math.h>
-# include <errno.h>
 //# include "../minilibx-linux/mlx.h"
 # include "../Libft/libft.h"
 
@@ -36,12 +35,6 @@
 # define COS 0.99995000041
 # define SIN 0.00999983333
 # define FOV 0.66
-# define VALID_CHARS " 01NSEW\n"
-# define SPAWN_CHARS "NSEW"
-# define INSIDE_CHARS "0NSEW"
-# define DOOR '2'
-
-typedef struct s_game	t_game;
 
 // ------------ Structs ------------
 
@@ -96,7 +89,7 @@ typedef struct s_keys
 } t_keys;
 
 // Texture struct
-typedef struct s_img 
+typedef struct s_texture 
 {
     void *img; // Image of the texture itself.
     char *addr; //memory address
@@ -105,7 +98,7 @@ typedef struct s_img
     int bits_per_pixel; //HERE!!!!!!!!!!
     int endian;         //HERE!!!!!!!!!!
     int len;            //HERE!!!!!!!!!!
-} t_img;
+} t_texture;
 
 //Draw calculations
 typedef struct s_draw
@@ -129,84 +122,52 @@ typedef struct s_wall_calc
 //Ray data
 typedef struct s_ray
 {
-    //double dir_x; //ray->direction of x
-    //double dir_y; //ray->direction of y
-    //double side_dist_x; // Distance to the first vertical line the ray hits
-    //double side_dist_y; // Distance to the first horizontal line the ray hits
-    //double delta_dist_x;// Distance from one vertical line to the next
-    //double delta_dist_y;// Distance from one horizontal line to the next
+    double dir_x; //ray->direction of x
+    double dir_y; //ray->direction of y
+    double side_dist_x; // Distance to the first vertical line the ray hits
+    double side_dist_y; // Distance to the first horizontal line the ray hits
+    double delta_dist_x;// Distance from one vertical line to the next
+    double delta_dist_y;// Distance from one horizontal line to the next
     double perp_wall_dist; //Ray parallel to the player's direction ray
-    //int step_x; //1 if positive, -1 if negative
-    //int step_y; //1 if positive, -1 if negative
+    int step_x; //1 if positive, -1 if negative
+    int step_y; //1 if positive, -1 if negative
     int hit;    //Position where the ray hit the wall
     int side;   //Which side did the ray hit the wall
     double  camera_x; //[-1, 1] // -1 is the leftmost side of the screen
     int     reached_wall; //if pos += delta as touched a wall
+    //int     side; //side of the wall that was hit
 } t_ray;
 
-typedef struct s_vf2d
-{
-	double	x;
-	double	y;
-}	t_vf2d;
-
 // Player struct
-typedef struct s_player
+typedef struct s_player 
 {
-    t_game		*g;
-	char		**map;
-    t_vf2d		pos;
-    t_vf2d      new_pos;
-	t_vf2d		dir;
-	t_vf2d		ray_dir;
-	t_vf2d		plane;
-    t_vf2d		side_dist;
-    t_vf2d		delta_dist;
-
-    t_2d_grid   step;
-
-    //double x; // Player´s X position
-    //double y; // Player´s Y position
-    //double new_x; // Player's X position + Step
-    //double new_y; // Player's Y position + Step
-    //double dir_x; // Player´s direction vector X
-    //double dir_y; // Player´s direction vector Y
-    //double plane_x; // Player´s camera plane X
-    //double plane_y; // Player´s camera plane Y
+    double x; // Player´s X position
+    double y; // Player´s Y position
+    double new_x; // Player's X position + Step
+    double new_y; // Player's Y position + Step
+    double dir_x; // Player´s direction vector X
+    double dir_y; // Player´s direction vector Y
+    double plane_x; // Player´s camera plane X
+    double plane_y; // Player´s camera plane Y
     float move_speed; // Player´s movement speed
     float rot_speed; // Player´s rotation speed
 } t_player;
 
-typedef enum e_texture
-{
-	we,
-	ea,
-	no,
-	so
-}	t_texture;
-
-typedef enum e_color
-{
-	clg,
-	flr
-}	t_color;
-
 // Main game struct
 typedef struct s_game 
 {
-    char		*file_line;
     // MLX variables (graphic library)
     void *mlx; // Instance of the mlx library. To allow interaction with the graphic system.
     void *win; // Game window to be rendered. The window where the game will be displayed.
-   // void *img; //
+    void *img; //
     // t_texture screen_image; // Image to be rendered. The image that will be displayed on the window and that´s the background of the game.
     // Game Map (2D representation)
-    //t_map map; // The Map of the game: map structure. Contains the map data and its dimensions (width and height).
+    t_map map; // The Map of the game: map structure. Contains the map data and its dimensions (width and height).
     char *tokens_params[7]; // Array with the splited map parameters.
     char *tmp_map_grid; // Temporary map grid to store the map data before it´s copied to the map structure.
     
     // Players properties
-    //t_player player; // Player´s information: position, direction, etc
+    t_player player; // Player´s information: position, direction, etc
     
     // Ray data
     t_ray ray;
@@ -222,25 +183,18 @@ typedef struct s_game
     
     // Textures
     char *textures[4]; // Texture for the 4 directions for walls and sprites: north, south, east, west, amd the player.
-    //t_texture img_text[4];  // void *img inside t_texture struct is the Image to be rendered. The image that will be displayed on the window and that´s the background of the game.
-    //t_texture pixels; //HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    t_img		img[4];
-	t_img		screen;
+    t_texture img_text[4];  // void *img inside t_texture struct is the Image to be rendered. The image that will be displayed on the window and that´s the background of the game.
+    t_texture pixels; //HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
     // Colors
-   // int floor_color;
-   // int ceiling_color;
-
-	int			color[2];
-	char		**map;
-    t_2d_grid   check;
-	int			map_height;
-	t_player	pl;
+    int floor_color;
+    int ceiling_color;
 } t_game;
 
 //Parser
-int	parse_file(t_game *game, char *file);
-int	lexer(t_game *game, char **tokens);
-void	parse_map(t_game *game, int fd);
+void tokenizer (t_game *game, char *file);
+void lexer(t_game *game);
+void parse_check_map(t_game *game);
 
 //Init
 void setup_game(t_game *game);
@@ -270,10 +224,11 @@ void dda_calculations(t_game *game);
 void put_pixil(t_game *game, int x, int y, int color);
 
 //Cleanup - exit/error
-int	exit_error(t_game *game, char *message);
+void exit_error (t_game *game, char *msg);
 int	exit_game(t_game *game, char *msg);
-int	exit_esc(t_game *game);
-int	free_game(t_game *game);
+int	exit_x(t_game *game);
+void	free_game(t_game *game);
+
 
 #endif
 

@@ -19,12 +19,12 @@
 /* ray.side = 3 */
 /* y positive --> = 3 */
 /* y negative --> = 2 */
-static void check_collision(t_game *game, t_2d_grid check)
+static void check_collision(t_game *game, t_2d_grid checker)
 {
-    if (game->map[check.y][check.x] != '0')
+    if (game->map.grid[checker.y][checker.x] != '0')
     {
         game->ray.reached_wall = game->ray.side - (game->ray.side == 1 && 
-        game->pl.step.x < 0) - (game->ray.side == 3 && game->pl.step.y < 0);
+        game->ray.step_x < 0) - (game->ray.side == 3 && game->ray.step_y < 0);
     }
 }
 
@@ -34,13 +34,13 @@ static void hit_length(t_game *game)
     double hit_x;
 
     if (game->ray.side == 1)
-        game->ray.perp_wall_dist = game->pl.side_dist.x - game->pl.delta_dist.x; //Distance traveled along the ray X
+        game->ray.perp_wall_dist = game->ray.side_dist_x - game->ray.delta_dist_x; //Distance traveled along the ray X
     else
-        game->ray.perp_wall_dist = game->pl.side_dist.y - game->pl.delta_dist.y;
+        game->ray.perp_wall_dist = game->ray.side_dist_y - game->ray.delta_dist_y;
     if (game->ray.side == 1)
-        hit_x = game->pl.pos.y + game->ray.perp_wall_dist * game->pl.ray_dir.y; // Hit position
+        hit_x = game->player.y + game->ray.perp_wall_dist * game->ray.dir_y; // Hit position
     else
-        hit_x = game->pl.pos.x + game->ray.perp_wall_dist * game->pl.ray_dir.x;
+        hit_x = game->player.x + game->ray.perp_wall_dist * game->ray.dir_x;
     hit_x -= floor(hit_x); //INT less or equal to hit (in x);
     game->ray.hit = (int)(hit_x * (double)TEXTURE_WIDTH);
     if (game->ray.reached_wall == 0) // On a vertical wall, if the ray hits the left side
@@ -66,19 +66,19 @@ static void draw_walls_data(t_game *game)
 
 static void each_delta_step(t_game *game)
 {
-    if (game->pl.side_dist.x < game->pl.side_dist.y)
+    if (game->ray.side_dist_x < game->ray.side_dist_y)
     {
         game->ray.side = 1;
-        game->pl.side_dist.x += game->pl.delta_dist.x;
-        game->check.x += game->pl.step.x;
+        game->ray.side_dist_x += game->ray.delta_dist_x;
+        game->map.checker.x += game->ray.step_x;
     }
     else
     {
         game->ray.side = 3;
-        game->pl.side_dist.y += game->pl.delta_dist.y;
-        game->check.y += game->pl.step.y;
+        game->ray.side_dist_y += game->ray.delta_dist_y;
+        game->map.checker.y += game->ray.step_y;
     }
-    check_collision(game, game->check);
+    check_collision(game, game->map.checker);
 }
 
 /* DDA --> Digital Differential Analysis */

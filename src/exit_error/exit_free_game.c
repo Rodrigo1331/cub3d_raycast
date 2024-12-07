@@ -3,56 +3,78 @@
 /*                                                        :::      ::::::::   */
 /*   exit_free_game.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joaosilva <joaosilva@student.42.fr>        +#+  +:+       +#+        */
+/*   By: rcruz-an <rcruz-an@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:01:22 by joaosilva         #+#    #+#             */
-/*   Updated: 2024/12/06 11:14:05 by joaosilva        ###   ########.fr       */
+/*   Updated: 2024/12/04 15:33:47 by rcruz-an         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/cub3d.h"
 
-
-static void	free_game_mlx(t_game *game)
+/* static void	free_textures(t_game *game)
 {
 	int	i;
 
 	i = -1;
 	while (++i < 4)
-		if (game->img[i].img)
-			mlx_destroy_image(game->mlx, game->img[i].img);
-	if (game->screen.img)
-		mlx_destroy_image(game->mlx, game->screen.img);
+		if (game->textures[i])
+			free(game->textures[i]);
+} */
+
+static void free_mlx(t_game *game)
+{
+	int	i;
+
+	i = -1;
+	while (++i < 4)
+		if (game->img_text[i].img)
+			mlx_destroy_image(game->mlx, game->img_text[i].img);
+	if (game->pixels.img)
+		mlx_destroy_image(game->mlx, game->pixels.img);
 	if (game->win)
 		mlx_destroy_window(game->mlx, game->win);
 	mlx_destroy_display(game->mlx);
 	free(game->mlx);
 }
 
-int	free_game(t_game *game)
+void free_tokens(t_game *game)
 {
-	int	i;
+    int    i;
 
-	if (!game)
-		return (0);
-	if (game->mlx)
-		free_game_mlx(game);
-	if (game->file_line)
-		free(game->file_line);
-	i = -1;
-	while (++i < 4)
-		if (game->textures[i])
-			free(game->textures[i]);
-	if (game->map)
-		ft_free_array(game->map);
-	exit(0);
+    i = -1;
+    while (++i < 7)
+        if (game->tokens_params[i])
+            free(game->tokens_params[i]);
 }
 
-int	exit_error(t_game *game, char *message)
+void    free_game(t_game *game)
 {
-	ft_putendl_fd(RED"Error", 2);
-	ft_putendl_fd(message, 2);
-	ft_putstr_fd(RESET, 2);
+    if (game)
+    {
+        if (game->mlx)
+            free_mlx(game);
+        //free_textures(game);
+        if (game->map.grid)
+            ft_free_array(game->map.grid);
+        if (game->tmp_map_grid)
+            free(game->tmp_map_grid);
+        if (game->tokens_params)
+            free_tokens(game);
+    }
+    exit(EXIT_SUCCESS);
+}
+
+int	exit_x(t_game *game)
+{
+	ft_putendl_fd("You gave up! See you soon!", 1);
 	free_game(game);
-	exit(errno);
+	exit(EXIT_SUCCESS);
+}
+
+void	exit_error(t_game *game, char *msg)
+{
+	ft_putendl_fd("\nError: ", 2);
+	ft_putendl_fd(msg, 2);
+	free_game(game);
 }

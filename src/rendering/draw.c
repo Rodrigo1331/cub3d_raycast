@@ -12,7 +12,7 @@
 
 #include "../../include/cub3d.h"
 
-static int get_pixil(t_img *texture, int x, int y)
+static int get_pixil(t_texture *texture, int x, int y)
 {
     return (*(unsigned int *)(texture->addr + \
 		(y * texture->len) + (x * (texture->bits_per_pixel / 8))));
@@ -22,8 +22,8 @@ void put_pixil(t_game *game, int x, int y, int color)
 {
     char *dest;
 
-    dest = game->screen.addr + (y * game->screen.len + x * 
-        (game->screen.bits_per_pixel / 8));
+    dest = game->pixels.addr + (y * game->pixels.len + x * 
+        (game->pixels.bits_per_pixel / 8));
     *(unsigned int *)dest = color;
 }
 
@@ -54,7 +54,7 @@ void draw(t_game *game, int x)
 	{
 		tex_y = (int)game->draw.pos & (TEXTURE_HEIGHT - 1); //update texture_y until it reaches the end of the texture
 		game->draw.pos += game->draw.step;
-		color = get_pixil(&game->img[game->ray.reached_wall], game->ray.hit, tex_y); //get the address of the pixel
+		color = get_pixil(&game->img_text[game->ray.reached_wall], game->ray.hit, tex_y); //get the address of the pixel
 		color = darken_color(color, game->ray.perp_wall_dist); //Make it darker to be more realistic
 		put_pixil(game, x, y, color); //put pixel (it is printed in raycasting)
 		y++;

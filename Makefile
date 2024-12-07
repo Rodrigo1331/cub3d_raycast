@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: joaosilva <joaosilva@student.42.fr>        +#+  +:+       +#+         #
+#    By: rcruz-an <rcruz-an@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/23 20:32:02 by joaosilva         #+#    #+#              #
-#    Updated: 2024/12/06 10:27:06 by joaosilva        ###   ########.fr        #
+#    Updated: 2024/12/03 16:28:43 by rcruz-an         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,8 +20,8 @@ CFLAGS = -Wall -Wextra -Werror -g #-O3 #-g #-fsanitize=address #-pthread ead #-f
 INCLUDE = -I include
 
 ############  Source files - Sources to objects ###########
-SRC_FILES = main.c parse/parse.c parse/lexer.c parse/parse_map.c \
-movement/handle_keys.c movement/movement_utils.c movement/rotation.c \
+SRC_FILES = main.c parser/tokenizer.c parser/lexer.c parser/check_map.c \
+movement/handle_keys.c movement/linear_moves.c movement/rotation.c \
 rendering/raycasting.c rendering/dda.c rendering/draw.c \
 exit_error/exit_free_game.c \
  
