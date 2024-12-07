@@ -3,7 +3,8 @@ SO textures/south_wall.xpm
 EA textures/east_wall.xpm
 WE textures/west_wall.xpm
 
-F 20,20,-20
+
+F 20,20,20
 C 200,200,200
 
 11111
