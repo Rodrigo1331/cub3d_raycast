@@ -6,7 +6,7 @@
 /*   By: rcruz-an <rcruz-an@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 15:56:06 by joaosilva         #+#    #+#             */
-/*   Updated: 2024/12/04 17:40:54 by rcruz-an         ###   ########.fr       */
+/*   Updated: 2024/12/07 11:13:56 by rcruz-an         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,6 @@ void	process_line(t_game *game, char *line, int *tokens_index, int i)
 		old_map_grid = game->tmp_map_grid;
 		game->tmp_map_grid = ft_strjoin(old_map_grid, line);
 		free(old_map_grid);
-		//free(trimmed_line);
 		return ;
 	}
 	trimmed_line = ft_strtrim(line, " ");

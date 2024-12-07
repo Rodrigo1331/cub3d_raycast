@@ -6,32 +6,38 @@
 /*   By: rcruz-an <rcruz-an@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 12:08:01 by joaosilva         #+#    #+#             */
-/*   Updated: 2024/12/04 17:41:49 by rcruz-an         ###   ########.fr       */
+/*   Updated: 2024/12/07 11:20:41 by rcruz-an         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/cub3d.h"
 
-void init_draw(t_game *game)
+void	init_mlx_textures(t_game *game)
 {
-    int i;
+	int	i;
 
-    i = -1;
-	game->mlx = mlx_init();
-	if (!game->mlx)
-		exit_error(game, "Couldn't initialize mlx");
-    while (++i < 4) //Get the address of the textures
+	i = -1;
+	while (++i < 4)
 	{
-		game->img_text[i].img = mlx_xpm_file_to_image(game->mlx, game->textures[i],
+		game->img_text[i].img = mlx_xpm_file_to_image(game->mlx,
+				game->textures[i],
 				&game->img_text[i].width, &game->img_text[i].height);
 		if (!game->img_text[i].img)
 			exit_error(game, "Failed to load texture");
-		game->img_text[i].addr = mlx_get_data_addr(game->img_text[i].img, 
-			&game->img_text[i].bits_per_pixel, &game->img_text[i].len,
-			&game->img_text[i].endian);
+		game->img_text[i].addr = mlx_get_data_addr(game->img_text[i].img,
+				&game->img_text[i].bits_per_pixel, &game->img_text[i].len,
+				&game->img_text[i].endian);
 		if (!game->img_text[i].addr)
 			exit_error(game, "Failed to get texture address");
 	}
+}
+
+void	init_draw(t_game *game)
+{
+	game->mlx = mlx_init();
+	if (!game->mlx)
+		exit_error(game, "Couldn't initialize mlx");
+	init_mlx_textures(game);
 	game->pixels.width = (int)SCREEN_WIDTH;
 	game->pixels.height = (int)SCREEN_HEIGHT;
 	game->pixels.img = mlx_new_image(game->mlx, game->pixels.width,
@@ -39,11 +45,12 @@ void init_draw(t_game *game)
 	if (!game->pixels.img)
 		exit_error(game, "New image creation failed");
 	game->pixels.addr = mlx_get_data_addr(game->pixels.img,
-			&game->pixels.bits_per_pixel, &game->pixels.len, &game->pixels.endian);
+			&game->pixels.bits_per_pixel, &game->pixels.len,
+			&game->pixels.endian);
 	if (!game->pixels.addr)
 		exit_error(game, "Image address failed");
 	game->win = mlx_new_window(game->mlx, game->pixels.width,
-		game->pixels.height, "Cub3D");
+			game->pixels.height, "Cub3D");
 	if (!game->win)
 		exit_error(game, "New window creation failed!");
 }
@@ -124,7 +131,6 @@ void	parser(t_game *game, int ac, char *file)
 	parse_check_file(ac, file, i, fd);
 	tokenizer(game, file);
 	lexer(game);
-	/* print_game_atributes(game); */
 	parse_check_map(game);
 }
 

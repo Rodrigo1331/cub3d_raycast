@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joaosilva <joaosilva@student.42.fr>        +#+  +:+       +#+        */
+/*   By: rcruz-an <rcruz-an@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 15:55:55 by joaosilva         #+#    #+#             */
-/*   Updated: 2024/12/04 22:08:29 by joaosilva        ###   ########.fr       */
+/*   Updated: 2024/12/07 11:13:20 by rcruz-an         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,21 +81,19 @@ void	check_empty_line_in_map(t_game *game)
 	char	*map;
 	int		last_line_len;
 
-	map = game->tmp_map_grid; // map é o mapa temporário
+	map = game->tmp_map_grid;
 	while (*map)
 	{
 		last_line_len = ft_strclen(map, '\n');
-		// Verificar se há uma linha vazia seguida por uma linha não vazia
 		if (!last_line_len && ft_strclen(map + 1, '\n'))
 			exit_error(game,
 				"Invalid map: number found after map and empty line.\n");
 		map += last_line_len;
-		if (*map == '\n') // Avançar o ponteiro se o caractere atual for '\n'
+		if (*map == '\n')
 			map++;
 	}
-	// Verificar se o último caractere do mapa é '\0' após o processamento
 	if (last_line_len > 0 && game->tmp_map_grid[last_line_len - 1] == '\0')
-		return; // Mapa válido
+		return ;
 }
 
 void	parse_check_map(t_game *game)
@@ -116,5 +114,4 @@ void	parse_check_map(t_game *game)
 	game->map.grid = ft_split(game->tmp_map_grid, '\n');
 	if (!game->map.grid)
 		exit_error(game, "Memory allocation failed in ft_split.\n");
-	//free(game->tmp_map_grid);
 }
