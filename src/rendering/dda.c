@@ -21,7 +21,7 @@
 /* y negative --> = 2 */
 static void check_collision(t_game *game, t_2d_grid checker)
 {
-    if (game->map.grid[checker.y][checker.x] != '0')
+    if (game->map.grid[checker.y][checker.x] != '0' && !ft_strrchr("NSWE", game->map.grid[checker.y][checker.x]))
     {
         game->ray.reached_wall = game->ray.side - (game->ray.side == 1 && 
         game->ray.step_x < 0) - (game->ray.side == 3 && game->ray.step_y < 0);
